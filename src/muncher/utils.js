@@ -87,7 +87,7 @@ export async function getPatreonValidity(betaKey) {
 }
 
 export function getPatreonTiers(tier) {
-  const godTier = tier === "GOD";
+  const godTier = true;//tier === "GOD"; 
   const undyingTier = tier === "UNDYING";
   const coffeeTier = tier === "COFFEE";
 
