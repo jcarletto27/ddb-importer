@@ -1,9 +1,9 @@
 {
   "name": "ddb-importer",
-  "author": "MrPrimate-modded by jc",
+  "author": "modded by jc",
   "title": "D&D Beyond Importer [Dev Mode - Mods]",
   "description": "Import your dndbeyond.com characters, spells and monsters at super speed!",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "download": "https://github.com/jcarletto27/ddb-importer/releases/download/latest/ddb-importer.zip",
   "manifest": "https://github.com/jcarletto27/ddb-importer/releases/download/latest/module.json",
   "url": "https://github.com/jcarletto27/ddb-importer",
