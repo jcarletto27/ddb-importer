@@ -109,6 +109,15 @@ export default function () {
     default: false,
   });
 
+  game.settings.register("ddb-importer", "allow-note-generation", {
+    name: "ddb-importer.allow-note-generation.name",
+    hint: "ddb-importer.allow-note-generation.hint",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register("ddb-importer", "auto-create-compendium", {
     name: "ddb-importer.auto-create-compendium.name",
     hint: "ddb-importer.auto-create-compendium.hint",
@@ -316,10 +325,14 @@ export default function () {
     default: "https://ddb.mrprimate.co.uk",
   });
 
-  // const PROXY = "https://proxy.vttassets.com/?url=";
-  // const URL_ENCODE = false;
-  // const PROXY = "https://i.vtta.io/dl/";
-  // const URL_ENCODE = true;
+  game.settings.register("ddb-importer", "custom-proxy", {
+    name: "ddb-importer.custom-proxy.name",
+    hint: "ddb-importer.custom-proxy.hint",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false,
+  });
 
   game.settings.register("ddb-importer", "cors-endpoint", {
     name: "ddb-importer.cors-endpoint.name",
@@ -917,6 +930,15 @@ export default function () {
     config: false,
     type: Boolean,
     default: true,
+  });
+
+  game.settings.register("ddb-importer", "munching-policy-use-full-token-image", {
+    name: "ddb-importer.munching-policy-use-full-token-image.name",
+    hint: "ddb-importer.munching-policy-use-full-token-image.hint",
+    scope: "player",
+    config: false,
+    type: Boolean,
+    default: false,
   });
 
   game.settings.register("ddb-importer", "munching-policy-remote-images", {

@@ -1,6 +1,31 @@
+# 1.0.1
+
+* Items with no names no longer cause the importer to fail
+* More CSS tweaks.
+* Scene export now captures note icon scale and light animations.
+
+# 1.0.0
+
+* You can now import the full/avatar art as the token art, rather than the square token image.
+* Better scene data extraction for adventure-muncher.
+* Patreon restrictions relaxed, source filter and homebrew imports now available to Coffee Tier.
+* Fixed CSS issue which effected all blockquotes.
+
+# 0.6.33
+
+* Improved Journal formatting for imported adventures.
+* Improved scene note icons.
+
+# 0.6.32
+
+* Spells that have a target of self, but do damage, now set themselves to target creature instead.
+* Default Better Rolls config will no longer auto-consume charges on Weapons when you attack with them.
+* Support for exporting Adventure Muncher Note Pins for scenes imported from Adventure Muncher 0.0.15.
+
 # 0.6.31
 
 * Some optional class feature edge cases prevented some modifiers from being used. e.g. Skills from a Barbarian's Primal Knowledge option.
+* Active Effects: Base AC option did not calculate correctly, if a shield was equipped.
 
 # 0.6.30
 

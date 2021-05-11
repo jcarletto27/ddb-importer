@@ -84,6 +84,7 @@ export default class DDBMuncher extends Application {
   static startMunch() {
     munchNote(`Downloading monsters...`, true);
     $('button[id^="munch-"]').prop('disabled', true);
+    $('button[id^="adventure-config-start"]').prop('disabled', true);
     DDBMuncher.parseCritters();
   }
 
@@ -99,26 +100,31 @@ export default class DDBMuncher extends Application {
     html.find("#munch-spells-start").click(async () => {
       munchNote(`Downloading spells...`, true);
       $('button[id^="munch-"]').prop('disabled', true);
+      $('button[id^="adventure-config-start"]').prop('disabled', true);
       DDBMuncher.parseSpells();
     });
     html.find("#munch-items-start").click(async () => {
       munchNote(`Downloading items...`, true);
       $('button[id^="munch-"]').prop('disabled', true);
+      $('button[id^="adventure-config-start"]').prop('disabled', true);
       DDBMuncher.parseItems();
     });
     html.find("#munch-races-start").click(async () => {
       munchNote(`Downloading races...`, true);
       $('button[id^="munch-"]').prop('disabled', true);
+      $('button[id^="adventure-config-start"]').prop('disabled', true);
       DDBMuncher.parseRaces();
     });
     html.find("#munch-feats-start").click(async () => {
       munchNote(`Downloading feats...`, true);
       $('button[id^="munch-"]').prop('disabled', true);
+      $('button[id^="adventure-config-start"]').prop('disabled', true);
       DDBMuncher.parseFeats();
     });
     html.find("#munch-classes-start").click(async () => {
       munchNote(`Downloading classes...`, true);
       $('button[id^="munch-"]').prop('disabled', true);
+      $('button[id^="adventure-config-start"]').prop('disabled', true);
       DDBMuncher.parseClasses();
     });
     html.find("#adventure-config-start").click(async () => {
@@ -367,7 +373,7 @@ export default class DDBMuncher extends Application {
     const sourcesSelected = game.settings.get("ddb-importer", "munching-policy-monster-sources").flat().length > 0;
     const homebrewDescription = (tiers.homebrew)
       ? sourcesSelected
-        ? "Homebrew won't be imported with source(s) selected"
+        ? "SOURCES SELECTED! You can't import homebrew with a source filter selected"
         : "Include homebrew?"
       : "Include homebrew? [Undying or God tier patreon supporters]";
 
@@ -388,6 +394,12 @@ export default class DDBMuncher extends Application {
         name: "update-images",
         isChecked: game.settings.get("ddb-importer", "munching-policy-update-images"),
         description: "Update Monster images on existing items?",
+        enabled: true,
+      },
+      {
+        name: "use-full-token-image",
+        isChecked: game.settings.get("ddb-importer", "munching-policy-use-full-token-image"),
+        description: "Use avatar image for token rather than token image",
         enabled: true,
       },
       {

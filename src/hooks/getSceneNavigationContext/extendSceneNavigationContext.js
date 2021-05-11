@@ -9,30 +9,35 @@ import { download } from "../../muncher/utils.js";
   */
 const getNotes = (scene) => {
   // get all notes in the Journal related to this scene
-  let relatedJournalEntries = game.journal.filter((journal) =>
-    journal.data.flags.ddb?.ddbId &&
-    journal.data.flags.ddb.ddbId === scene.data.flags?.ddbId &&
-    journal.data.flags.ddb.cobaltId === scene.data.flags?.cobaltId &&
-    journal.data.flags.ddb.parentId === scene.data.flags?.parentId &&
-    journal.data.flags.ddb.bookCode === scene.data.flags?.bookCode
+  const relatedJournalEntries = game.journal.filter((journal) =>
+    journal.data.flags.ddb?.slug && scene.data.flags.ddb?.slug &&
+    journal.data.flags.ddb.slug === scene.data.flags.ddb.slug
   );
 
   // get all notes placed on the map
-  let notes = scene.data.notes
+  const notes = scene.data.notes
     // the user might have placed a note, unless it is based on an imported Journal Entry, we will not carry
     // that one over
-    .filter((note) => {
-      const journal = relatedJournalEntries.find((journal) => journal._id === note.entryId);
-      if (!journal) return false;
-      return journal && journal.data.flags.ddb.ddbId;
-    })
+    .filter((note) => relatedJournalEntries.some((journal) => journal._id === note.entryId))
     .map((note) => {
       const journal = relatedJournalEntries.find((journal) => journal._id === note.entryId);
-      const index = parseInt(journal.data.name.substring(0, 2));
+      const idx = parseInt(journal.data.flags.ddb.ddbId);
+        // removed un-needed userdata
+      const flags = journal.data.flags.ddb;
+      if (flags?.userData) {
+        if (flags.userData.status) delete (flags.userData.status);
+        if (flags.userData.userId) delete (flags.userData.userId);
+        if (flags.userData.twitchUserName) delete (flags.userData.twitchUserName);
+        if (flags.userData.AvatarUrl) delete (flags.userData.AvatarUrl);
+      }
       return {
-        index: index,
-        label: journal.data.name.substring(3),
-        flags: journal.data.flags.ddb,
+        index: idx,
+        label: journal.data.name,
+        flags: flags,
+        iconSize: note.iconSize,
+        iconTint: note.iconTint,
+        textColor: note.textColor,
+        textAnchor: note.textAnchor,
         x: note.x,
         y: note.y,
       };
@@ -42,14 +47,32 @@ const getNotes = (scene) => {
       if (idx) {
         idx.positions.push({ x: note.x, y: note.y });
       } else {
-        notes.push({ flags: note.flag, index: note.index, positions: [{ x: note.x, y: note.y }] });
+        const n = {
+          label: note.label,
+          flags: note.flags,
+          index: note.index,
+          iconSize: note.iconSize,
+          iconTint: note.iconTint,
+          textColor: note.textColor,
+          textAnchor: note.textAnchor,
+          positions: [{ x: note.x, y: note.y }]
+        };
+        notes.push(n);
       }
       return notes;
     }, [])
     .sort((a, b) => {
       return a.index - b.index;
     })
-    .map((note) => ({ label: note.label, positions: note.positions }));
+    .map((note) => ({
+      label: note.label,
+      flags: note.flags,
+      positions: note.positions,
+      iconSize: note.iconSize,
+      iconTint: note.iconTint,
+      textColor: note.textColor,
+      textAnchor: note.textAnchor,
+    }));
 
   return notes;
 };
@@ -75,10 +98,10 @@ const collectSceneData = (scene) => {
     gridUnits: scene.data.gridUnits,
     shiftX: scene.data.shiftX,
     shiftY: scene.data.shiftY,
+    // initial
+    initial: scene.data.initial,
     // customization
     backgroundColor: scene.data.backgroundColor,
-    // notes
-    descriptions: notes,
     walls: scene.data.walls.map((wall) => ({
       c: wall.c,
       door: wall.door,
@@ -86,6 +109,14 @@ const collectSceneData = (scene) => {
       move: wall.move,
       sense: wall.sense,
     })),
+    //
+    drawings: scene.data.drawings,
+    weather: scene.data.weather,
+    // lights
+    darkness: scene.data.darkness,
+    tokenVision: scene.data.tokenVision,
+    globalLight: scene.data.globalLight,
+    globalLightThreshold: scene.data.globalLightThreshold,
     lights: scene.data.lights.map((light) => ({
       angle: light.angle,
       bright: light.bright,
@@ -96,6 +127,8 @@ const collectSceneData = (scene) => {
       tintAlpha: light.tintAlpha,
       x: light.x,
       y: light.y,
+      lightAnimation: light.lightAnimation,
+      hidden: light.hidden,
     })),
     // tokens
     tokens: scene.data.tokens.filter((token) => !token.actorLink).map((token) => {
@@ -108,6 +141,7 @@ const collectSceneData = (scene) => {
         x: token.x,
         y: token.y,
         disposition: token.disposition,
+        flags: token.flags,
       };
     }),
   };
@@ -123,6 +157,11 @@ const collectSceneData = (scene) => {
     data.flags.vtta.code = scene.data.flags.vtta.thumb.split("/")[0].toLowerCase();
   }
 
+  data.flags.ddb.notes = notes;
+  data.flags.ddbimporter = {
+    version: game.modules.get("ddb-importer").data.version,
+  };
+
   return data;
 };
 
@@ -130,7 +169,8 @@ export default (html, contextOptions) => {
   contextOptions.push({
     name: "ddb-importer.scenes.download",
     callback: (li) => {
-      const scene = game.scenes.get(li.data("sceneId"));
+      const sceneId = $(li).attr("data-scene-id") ? $(li).attr("data-scene-id") : $(li).attr("data-entity-id");
+      const scene = game.scenes.get(sceneId);
       // console.warn(scene);
       const data = collectSceneData(scene);
       const bookCode = scene.data.flags.ddb?.bookCode
@@ -146,7 +186,8 @@ export default (html, contextOptions) => {
       return download(JSON.stringify(data), `${sceneRef}-scene.json`, "application/json");
     },
     condition: (li) => {
-      const scene = game.scenes.get(li.data("sceneId"));
+      const sceneId = $(li).attr("data-scene-id") ? $(li).attr("data-scene-id") : $(li).attr("data-entity-id");
+      const scene = game.scenes.get(sceneId);
       const sceneDownload = game.settings.get("ddb-importer", "allow-scene-download");
       const allowDownload = game.user.isGM && sceneDownload && (scene.data.flags.ddb?.ddbId || scene.data.flags.vtta?.code || scene.data.flags.vtta?.thumb);
       return allowDownload;

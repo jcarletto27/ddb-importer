@@ -40,6 +40,8 @@ export function getCampaignId() {
 }
 
 async function getPatreonTier() {
+  const customProxy = game.settings.get("ddb-importer", "custom-proxy");
+  if (customProxy) return { success: true, message: "custom proxy", data: "CUSTOM" };
   const betaKey = game.settings.get("ddb-importer", "beta-key");
   const parsingApi = game.settings.get("ddb-importer", "api-endpoint");
   const body = { betaKey: betaKey };
@@ -66,6 +68,8 @@ async function getPatreonTier() {
 }
 
 export async function getPatreonValidity(betaKey) {
+  const customProxy = game.settings.get("ddb-importer", "custom-proxy");
+  if (customProxy) return { success: true, message: "custom proxy", data: true };
   const parsingApi = game.settings.get("ddb-importer", "api-endpoint");
   const body = { betaKey: betaKey };
 
@@ -90,15 +94,19 @@ export function getPatreonTiers(tier) {
   const godTier = true;//tier === "GOD"; 
   const undyingTier = tier === "UNDYING";
   const coffeeTier = tier === "COFFEE";
+  const custom = tier === "CUSTOM";
 
   const tiers = {
     god: godTier,
     undying: undyingTier,
+    custom: custom,
     coffee: coffeeTier,
-    source: godTier || undyingTier,
-    homebrew: godTier || undyingTier,
+    source: godTier || undyingTier || coffeeTier || custom,
+    experimentalMid: godTier || undyingTier,
+    homebrew: godTier || undyingTier || coffeeTier || custom,
+    all: godTier || undyingTier || coffeeTier || custom,
     supporter: godTier || undyingTier || coffeeTier,
-    not: !godTier && !undyingTier && !coffeeTier,
+    not: !godTier && !undyingTier && !coffeeTier && !custom,
   };
 
   return tiers;
