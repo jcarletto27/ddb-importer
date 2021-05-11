@@ -60,9 +60,14 @@ var srdPacks = {};
 
 async function loadSRDPacks(compendiumName) {
   if (srdPacksLoaded[compendiumName]) return;
-  srdPacks[compendiumName] = await game.packs.get(compendiumName).getContent().then((data) => data.map((i) => i.data));
-  // eslint-disable-next-line require-atomic-updates
-  srdPacksLoaded[compendiumName] = true;
+  const srdPack = await game.packs.get(compendiumName);
+  if (!srdPack) {
+    logger.error(`Failed to load SRDPack ${compendiumName}`);
+  } else {
+    srdPacks[compendiumName] = await srdPack.getContent().then((data) => data.map((i) => i.data));
+    // eslint-disable-next-line require-atomic-updates
+    srdPacksLoaded[compendiumName] = true;
+  }
 }
 
 const gameFolderLookup = [
@@ -802,7 +807,7 @@ async function updateMatchingItems(oldItems, newItems, looseMatch = false, monst
   let results = [];
 
   for (let item of newItems) {
-    logger.debug(`checking ${item.name}`);
+    // logger.debug(`checking ${item.name}`);
     const matched = await looseItemNameMatch(item, oldItems, looseMatch, monster); // eslint-disable-line no-await-in-loop
 
     // logger.debug(`matched? ${JSON.stringify(matched)}`);
@@ -847,6 +852,7 @@ export async function getCompendiumItems(items, type, compendiumLabel = null, lo
     compendiumLabel = getCompendiumLabel(type);
   }
   const compendium = await game.packs.find((pack) => pack.collection === compendiumLabel);
+  if (!compendium) return [];
   const index = await compendium.getIndex();
   const firstPassItems = await index.filter((i) =>
     items.some((orig) => {

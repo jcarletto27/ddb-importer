@@ -52,7 +52,7 @@ jobs:
     - name: Create Latest Release
       id: create_latest_release
       uses: ncipollo/release-action@v1
-      if: endsWith(github.ref, 'master') # Only update the latest release when pushing to the master branch
+      if: endsWith(github.ref, 'main') # Only update the latest release when pushing to the master branch
       with:
         allowUpdates: true
         name: Latest
@@ -67,4 +67,4 @@ jobs:
         DISCORD_USERNAME: "Release-O-Bot"
       uses: Ilshidur/action-discord@0.0.2
       with:
-        args: 'DDB Importer ${{ steps.get-version.outputs.version }} has been published!'
+        args: 'DDB Importer ${{ steps.get-version.outputs.version }} has been published by our development Kobolds!'

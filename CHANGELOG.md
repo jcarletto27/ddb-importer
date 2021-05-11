@@ -1,6 +1,29 @@
+# 1.0.6
+
+* Boots of Striding and Springing did not set speed adjustment correctly.
+
+# 1.0.5
+
+* Correct proficiency modifier multipliers on action and resource useage.
+* Some abilities (e.g. Astaral monk Summon bonus action) added `+ @mod` incorrectly.
+
+# 1.0.4
+
+* Remove bug where actions such as Sneak Attack imported the feature and action when action only option was selected.
+* Sneak attack now uses auto-scaling formula rather than fixed value.
+* Divine Smite helper spell was no longer added.
+
+# 1.0.3
+
+* Tomes did not add stat bonuses correctly.
+
+# 1.0.2
+
+* Scene export improvements.
+
 # 1.0.1
 
-* Items with no names no longer cause the importer to fail
+* Items with no names no longer cause the importer to fail.
 * More CSS tweaks.
 * Scene export now captures note icon scale and light animations.
 
